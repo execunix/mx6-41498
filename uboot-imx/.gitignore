@@ -1,0 +1,68 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.cmd
+*.dtb
+*.mod.c
+generated/
+.tmp_versions/
+modules.builtin
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+.config
+arch/arm/lib/asm-offsets.s
+board/freescale/mx6sabreauto/imx6es1.cfg.cfgtmp
+include/config/
+include/generated/
+lib/asm-offsets.s
+u-boot
+u-boot-nodtb.bin
+u-boot.bin
+u-boot.cfg
+u-boot.imx
+u-boot.imx.log
+u-boot.lds
