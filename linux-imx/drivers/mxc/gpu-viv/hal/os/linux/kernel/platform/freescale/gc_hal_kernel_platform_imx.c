@@ -126,7 +126,11 @@ extern int unregister_thermal_notifier(struct notifier_block *nb);
 #  define gcdFSL_CONTIGUOUS_SIZE (4 << 20)
 #endif
 
+#ifdef CONFIG_MX6ES1
+static int initgpu3DMinClock = 64;
+#else
 static int initgpu3DMinClock = 1;
+#endif
 module_param(initgpu3DMinClock, int, 0644);
 
 struct platform_device *pdevice;

@@ -528,6 +528,12 @@ config SOC_IMX6Q
 	help
 	  This enables support for Freescale i.MX6 Quad processor.
 
+config MX6ES1
+	bool "MX6ES1"
+
+config MX6ES1MFG
+	bool "MX6ES1MFG"
+
 config SOC_IMX6SL
 	bool "i.MX6 SoloLite support"
 	select HAVE_IMX_RNG

@@ -31,6 +31,9 @@
 #include <sound/initval.h>
 #include <linux/kmod.h>
 #include <linux/mutex.h>
+#ifdef CONFIG_MX6ES1
+#include <linux/gpio.h>
+#endif
 
 static int major = CONFIG_SND_MAJOR;
 int snd_major;
@@ -407,6 +410,11 @@ static int __init alsa_sound_init(void)
 		unregister_chrdev(major, "alsa");
 		return -ENOMEM;
 	}
+#ifdef CONFIG_MX6ES1
+	//pr_info("ALSA Driver Initialized.\n");
+	gpio_request(8, "tlv320-reset-pin");
+	gpio_direction_output(8, 1);
+#endif /*CONFIG_MX6ES1*/
 #ifndef MODULE
 	pr_info("Advanced Linux Sound Architecture Driver Initialized.\n");
 #endif

@@ -36,6 +36,9 @@
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/system_misc.h>
+#ifdef CONFIG_MX6ES1
+#include <linux/memblock.h>
+#endif
 
 #include "common.h"
 #include "cpuidle.h"
@@ -374,12 +377,16 @@ static void __init imx6q_opp_check_speed_grading(struct device *cpu_dev)
 	val >>= OCOTP_CFG3_SPEED_SHIFT;
 	val &= 0x3;
 
+#ifdef CONFIG_MX6ES1
+	/* skip */
+#else
 	if ((val != OCOTP_CFG3_SPEED_1P2GHZ) && cpu_is_imx6q())
 		if (dev_pm_opp_disable(cpu_dev, 1200000000))
 			pr_warn("failed to disable 1.2 GHz OPP\n");
 	if (val < OCOTP_CFG3_SPEED_996MHZ)
 		if (dev_pm_opp_disable(cpu_dev, 996000000))
 			pr_warn("failed to disable 996 MHz OPP\n");
+#endif
 	if (cpu_is_imx6q()) {
 		if (val != OCOTP_CFG3_SPEED_852MHZ)
 			if (dev_pm_opp_disable(cpu_dev, 852000000))
@@ -469,6 +476,17 @@ static const char * const imx6q_dt_compat[] __initconst = {
 	NULL,
 };
 
+#ifdef CONFIG_MX6ES1
+static void imx6q_init_reserve(void)
+{
+	phys_addr_t base, size;
+	base = 0x1f000000;
+	size = 0x01000000;
+	memblock_reserve(base, size);
+	memblock_remove(base, size);
+}
+#endif
+
 DT_MACHINE_START(IMX6Q, "Freescale i.MX6 Quad/DualLite (Device Tree)")
 	.l2c_aux_val 	= 0,
 	.l2c_aux_mask	= ~0,
@@ -478,4 +496,7 @@ DT_MACHINE_START(IMX6Q, "Freescale i.MX6 Quad/DualLite (Device Tree)")
 	.init_machine	= imx6q_init_machine,
 	.init_late      = imx6q_init_late,
 	.dt_compat	= imx6q_dt_compat,
+#ifdef CONFIG_MX6ES1
+	.reserve	= imx6q_init_reserve,
+#endif
 MACHINE_END

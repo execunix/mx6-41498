@@ -214,7 +214,11 @@ static uint type = 0;
 module_param(type, uint, 0664);
 MODULE_PARM_DESC(type, "0 - Char Driver (Default), 1 - Misc Driver");
 
+#ifdef CONFIG_MX6ES1
+static int gpu3DMinClock = 64;
+#else
 static int gpu3DMinClock = 1;
+#endif
 
 static int contiguousRequested = 0;
 

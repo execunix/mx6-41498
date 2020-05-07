@@ -199,6 +199,9 @@ static struct clk *origin_step_parent;
  */
 static void imx6ull_lower_cpu_rate(bool enter)
 {
+#ifdef CONFIG_MX6ES1
+	/* skip */
+#else
 	int ret;
 
 	if (enter) {
@@ -237,6 +240,7 @@ static void imx6ull_lower_cpu_rate(bool enter)
 		clk_set_rate(arm_clk, org_arm_rate);
 		clk_set_parent(pll1_bypass_clk, pll1_clk);
 	}
+#endif
 }
 
 /*

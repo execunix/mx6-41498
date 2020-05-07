@@ -531,6 +531,9 @@ asmlinkage __visible void __init start_kernel(void)
 	boot_cpu_init();
 	page_address_init();
 	pr_notice("%s", linux_banner);
+#if 0//defined(CONFIG_MX6ES1) && !defined(CONFIG_USB_GADGET)
+	console_loglevel = CONSOLE_LOGLEVEL_SILENT;
+#endif
 	setup_arch(&command_line);
 	/*
 	 * Set up the the initial canary and entropy after arch
@@ -1008,6 +1011,9 @@ static int __ref kernel_init(void *unused)
 
 	rcu_end_inkernel_boot();
 
+#if 0//defined(CONFIG_MX6ES1) && !defined(CONFIG_USB_GADGET)
+	console_loglevel = CONSOLE_LOGLEVEL_DEFAULT;
+#endif
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)

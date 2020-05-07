@@ -1442,6 +1442,9 @@ static int swap_channels(struct fb_info *fbi_from)
 	struct fb_info *fbi_to = NULL;
 	struct mxcfb_info *mxc_fbi_to;
 
+#ifdef CONFIG_MX6ES1
+	//printk(KERN_ERR "swap_channels: %d\n", mxc_fbi_from->ipu_ch);
+#endif
 	/* what's the target channel? */
 	if (mxc_fbi_from->ipu_ch == MEM_BG_SYNC)
 		ch_to = MEM_DC_SYNC;
@@ -2368,6 +2371,9 @@ mxcfb_pan_display(struct fb_var_screeninfo *var, struct fb_info *info)
 	int i;
 	int ret;
 
+#ifdef CONFIG_MX6ES1
+	//printk(KERN_ERR "mxcfb_pan_display: ch=%d\n", mxc_fbi->ipu_ch);
+#endif
 	/* no pan display during fb blank */
 	if (mxc_fbi->ipu_ch == MEM_FG_SYNC) {
 		struct mxcfb_info *bg_mxcfbi = NULL;

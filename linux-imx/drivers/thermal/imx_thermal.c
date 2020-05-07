@@ -653,7 +653,11 @@ static int imx_get_sensor_data(struct platform_device *pdev)
 		break;
 	case 3: /* Automotive (-40 to 125C) */
 		data->temp_grade = "Automotive";
+#ifdef CONFIG_MX6ES1
+		data->temp_max = 150000;
+#else
 		data->temp_max = 125000;
+#endif
 		break;
 	}
 

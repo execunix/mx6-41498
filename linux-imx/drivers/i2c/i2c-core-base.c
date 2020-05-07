@@ -1926,7 +1926,11 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 	if (adap->algo->master_xfer) {
 #ifdef DEBUG
 		for (ret = 0; ret < num; ret++) {
+#if 0//def CONFIG_MX6ES1
+			dev_err(&adap->dev,
+#else
 			dev_dbg(&adap->dev,
+#endif
 				"master_xfer[%d] %c, addr=0x%02x, len=%d%s\n",
 				ret, (msgs[ret].flags & I2C_M_RD) ? 'R' : 'W',
 				msgs[ret].addr, msgs[ret].len,
@@ -1945,6 +1949,19 @@ int i2c_transfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
 
 		ret = __i2c_transfer(adap, msgs, num);
 		i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
+#if 0//def CONFIG_MX6ES1
+		if (num == 2) { // R
+			dev_err(&adap->dev, "0x%02x %c 0x%02x 0x%02x\n",
+				msgs[1].addr, (msgs[1].flags & I2C_M_RD) ? 'R' : 'W',
+				msgs[1].buf[0], msgs[1].buf[1]);
+		} else if (num == 1) { // W
+			dev_err(&adap->dev, "0x%02x %c 0x%02x 0x%02x\n",
+				msgs[0].addr, (msgs[0].flags & I2C_M_RD) ? 'R' : 'W',
+				msgs[0].buf[0], msgs[0].buf[1]);
+		} else {
+			dev_err(&adap->dev, "num=%d\n", num);
+		}
+#endif
 
 		return ret;
 	} else {

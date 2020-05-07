@@ -338,7 +338,11 @@ This define enables the use of VM for gckCommand and fence buffers.
         When non-zero, FSCALE_VAL when gcvPOWER_ON can be adjusted externally.
  */
 #ifndef gcdENABLE_FSCALE_VAL_ADJUST
+#ifdef CONFIG_MX6ES1
+#   define gcdENABLE_FSCALE_VAL_ADJUST          0//1
+#else
 #   define gcdENABLE_FSCALE_VAL_ADJUST          1
+#endif
 #endif
 
 /*

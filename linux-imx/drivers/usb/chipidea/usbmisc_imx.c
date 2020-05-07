@@ -1239,6 +1239,9 @@ static int usbmisc_imx_probe(struct platform_device *pdev)
 	data->ops = (const struct usbmisc_ops *)of_id->data;
 	platform_set_drvdata(pdev, data);
 
+#ifdef CONFIG_MX6ES1
+	vbus_wakeup_reg = NULL;
+#else
 	vbus_wakeup_reg = devm_regulator_get(&pdev->dev, "vbus-wakeup");
 	if (PTR_ERR(vbus_wakeup_reg) == -EPROBE_DEFER)
 		return -EPROBE_DEFER;
@@ -1250,6 +1253,7 @@ static int usbmisc_imx_probe(struct platform_device *pdev)
 			PTR_ERR(vbus_wakeup_reg));
 		return PTR_ERR(vbus_wakeup_reg);
 	}
+#endif
 
 	return 0;
 }
