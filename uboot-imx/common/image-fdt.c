@@ -234,7 +234,7 @@ int boot_get_fdt(int flag, int argc, char * const argv[], uint8_t arch,
 	char		*fdt_blob = NULL;
 	void		*buf;
 #if CONFIG_IS_ENABLED(FIT)
-	const char	*fit_uname_config = images->fit_uname_cfg;
+x	const char	*fit_uname_config = images->fit_uname_cfg;
 	const char	*fit_uname_fdt = NULL;
 	ulong		default_addr;
 	int		fdt_noffset;
@@ -249,7 +249,7 @@ int boot_get_fdt(int flag, int argc, char * const argv[], uint8_t arch,
 		select = argv[2];
 	if (select || genimg_has_config(images)) {
 #if CONFIG_IS_ENABLED(FIT)
-		if (select) {
+x		if (select) {
 			/*
 			 * If the FDT blob comes from the FIT image and the
 			 * FIT image address is omitted in the command line
@@ -279,7 +279,7 @@ int boot_get_fdt(int flag, int argc, char * const argv[], uint8_t arch,
 				      fdt_addr);
 			}
 #if CONFIG_IS_ENABLED(FIT)
-		} else {
+x		} else {
 			/* use FIT configuration provided in first bootm
 			 * command argument
 			 */
@@ -351,7 +351,7 @@ int boot_get_fdt(int flag, int argc, char * const argv[], uint8_t arch,
 			 * based).
 			 */
 #if CONFIG_IS_ENABLED(FIT)
-			/* check FDT blob vs FIT blob */
+x			/* check FDT blob vs FIT blob */
 			if (fit_check_format(buf)) {
 				ulong load, len;
 
@@ -417,7 +417,7 @@ int boot_get_fdt(int flag, int argc, char * const argv[], uint8_t arch,
 		}
 	}
 #ifdef CONFIG_ANDROID_BOOT_IMAGE
-	else if (genimg_get_format((void *)images->os.start) ==
+x	else if (genimg_get_format((void *)images->os.start) ==
 		IMAGE_FORMAT_ANDROID) {
 		ulong fdt_data, fdt_len;
 		android_image_get_second((void *)images->os.start,
@@ -500,6 +500,7 @@ int image_setup_libfdt(bootm_headers_t *images, void *blob,
 		printf("ERROR: root node setup failed\n");
 		goto err;
 	}
+	debug("image_setup_libfdt\n");
 	if (fdt_chosen(blob) < 0) {
 		printf("ERROR: /chosen node create failed\n");
 		goto err;

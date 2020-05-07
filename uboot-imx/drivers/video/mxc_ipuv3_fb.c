@@ -24,6 +24,9 @@
 #include "ipu.h"
 #include "mxcfb.h"
 #include "ipu_regs.h"
+#ifdef CONFIG_MX6ES1
+#include "../../common/bl2/bl2.h"
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -402,8 +405,12 @@ static int mxcfb_map_video_memory(struct fb_info *fbi)
 				    fbi->fix.line_length;
 	}
 	fbi->fix.smem_len = roundup(fbi->fix.smem_len, ARCH_DMA_MINALIGN);
+#ifdef CONFIG_MX6ES1
+	fbi->screen_base = (char *)BL2_FB_ADDR;
+#else
 	fbi->screen_base = (char *)memalign(ARCH_DMA_MINALIGN,
 					    fbi->fix.smem_len);
+#endif
 	fbi->fix.smem_start = (unsigned long)fbi->screen_base;
 	if (fbi->screen_base == 0) {
 		puts("Unable to allocate framebuffer memory\n");
@@ -419,8 +426,12 @@ static int mxcfb_map_video_memory(struct fb_info *fbi)
 
 	gd->fb_base = fbi->fix.smem_start;
 
+#ifdef CONFIG_MX6ES1
+	load_bootlogo(&bl2hdr, fbi->screen_base);
+#else
 	/* Clear the screen */
-	memset((char *)fbi->screen_base, 0, fbi->fix.smem_len);
+	memset(fbi->screen_base, 0, fbi->fix.smem_len);
+#endif
 
 	return 0;
 }
@@ -530,15 +541,22 @@ static int mxcfb_probe(u32 interface_pix_fmt, uint8_t disp,
 
 	mxcfbi->ipu_di_pix_fmt = interface_pix_fmt;
 	fb_videomode_to_var(&fbi->var, mode);
+#ifdef CONFIG_MX6ES1 // video=mxcfb0:dev=ldb,if=RGB24,fbpix=RGB32,bpp=32
+	fbi->var.bits_per_pixel = 32;
+#else
 	fbi->var.bits_per_pixel = 16;
+#endif
 	fbi->fix.line_length = fbi->var.xres * (fbi->var.bits_per_pixel / 8);
 	fbi->fix.smem_len = fbi->var.yres_virtual * fbi->fix.line_length;
 
 	mxcfb_check_var(&fbi->var, fbi);
 
+#ifdef CONFIG_MX6ES1
+	fbi->var.yres_virtual = fbi->var.yres;
+#else
 	/* Default Y virtual size is 2x panel size */
 	fbi->var.yres_virtual = fbi->var.yres * 2;
-
+#endif
 	mxcfb_set_fix(fbi);
 
 	/* allocate fb first */
@@ -555,8 +573,13 @@ static int mxcfb_probe(u32 interface_pix_fmt, uint8_t disp,
 	panel.frameAdrs = (u32)fbi->screen_base;
 	panel.memSize = fbi->screen_size;
 
+#ifdef CONFIG_MX6ES1 // video=mxcfb0:dev=ldb,if=RGB24,fbpix=RGB32,bpp=32
+	panel.gdfBytesPP = 4;
+	panel.gdfIndex = GDF_32BIT_X888RGB;
+#else
 	panel.gdfBytesPP = 2;
 	panel.gdfIndex = GDF_16BIT_565RGB;
+#endif
 
 	ipu_dump_registers();
 
@@ -568,6 +591,7 @@ err0:
 
 void ipuv3_fb_shutdown(void)
 {
+#ifndef CONFIG_MX6ES1 // tbd
 	int i;
 	struct ipu_stat *stat = (struct ipu_stat *)IPU_STAT;
 
@@ -586,6 +610,7 @@ void ipuv3_fb_shutdown(void)
 		__raw_writel(__raw_readl(&stat->int_stat[i]),
 			     &stat->int_stat[i]);
 	}
+#endif
 }
 
 void *video_hw_init(void)

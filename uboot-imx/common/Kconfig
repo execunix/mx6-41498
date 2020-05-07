@@ -630,4 +630,5 @@ config UPDATE_TFTP_MSEC_MAX
 
 endmenu
 
+source "common/bl2/Kconfig"
 source "common/spl/Kconfig"

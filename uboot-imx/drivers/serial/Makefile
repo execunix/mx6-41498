@@ -9,7 +9,9 @@ ifdef CONFIG_DM_SERIAL
 obj-$(CONFIG_$(SPL_TPL_)DM_SERIAL) += serial-uclass.o
 obj-$(CONFIG_PL01X_SERIAL) += serial_pl01x.o
 else
+ifndef CONFIG_MX6ES1
 obj-y += serial.o
+endif
 obj-$(CONFIG_PL010_SERIAL) += serial_pl01x.o
 obj-$(CONFIG_PL011_SERIAL) += serial_pl01x.o
 obj-$(CONFIG_SYS_NS16550_SERIAL) += serial_ns16550.o

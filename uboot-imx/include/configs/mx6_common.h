@@ -54,7 +54,11 @@
 /* allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 #define CONFIG_CONS_INDEX       1
+#ifdef CONFIG_MX6ES1
+#define CONFIG_BAUDRATE         921600
+#else
 #define CONFIG_BAUDRATE         115200
+#endif
 
 /* Filesystems and image support */
 #define CONFIG_SUPPORT_RAW_INITRD

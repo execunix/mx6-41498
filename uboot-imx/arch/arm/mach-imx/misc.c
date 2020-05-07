@@ -98,7 +98,7 @@ void board_lmb_reserve(struct lmb *lmb)
 	int bank;
 
 	sp = get_sp();
-	debug("## Current stack ends at 0x%08lx ", sp);
+	debug("## Current stack ends at 0x%08lx - adjust 16k\n", sp);
 
 	/* adjust sp by 16K to be safe */
 	sp -= 4096 << 2;

@@ -649,6 +649,14 @@ HAVE_VENDOR_COMMON_LIB = $(if $(wildcard $(srctree)/board/$(VENDOR)/common/Makef
 
 libs-y += lib/
 libs-$(HAVE_VENDOR_COMMON_LIB) += board/$(VENDOR)/common/
+ifdef CONFIG_MX6ES1BL2
+libs-y += drivers/mmc/
+libs-y += drivers/gpio/
+libs-y += drivers/serial/
+libs-y += drivers/watchdog/
+libs-y += drivers/video/
+libs-y += common/
+else
 libs-$(CONFIG_OF_EMBED) += dts/
 libs-y += fs/
 libs-y += net/
@@ -699,6 +707,7 @@ libs-y += test/
 libs-y += test/dm/
 libs-$(CONFIG_UT_ENV) += test/env/
 libs-$(CONFIG_UT_OVERLAY) += test/overlay/
+endif
 
 libs-y += $(if $(BOARDDIR),board/$(BOARDDIR)/)
 

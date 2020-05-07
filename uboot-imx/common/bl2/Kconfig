@@ -1,0 +1,14 @@
+config MX6ES1BL2
+	bool "MX6 Tiny Boot Loader"
+	default y if MX6ES1
+	default n
+	depends on MX6ES1
+	help
+	  MX6 Tiny Boot Loader
+
+config MX6ES1MFG
+	bool "MX6 mfg boot"
+	default n
+	depends on MX6ES1BL2
+	help
+	  MX6 mfg boot

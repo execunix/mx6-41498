@@ -553,7 +553,7 @@ static int mx6_init_after_reset(struct ehci_ctrl *dev)
 	ret = ehci_mx6_common_init(priv->ehci, priv->portnr);
 	if (ret)
 		return ret;
-
+#ifndef CONFIG_MX6ES1
 	if (priv->vbus_supply) {
 		ret = regulator_set_enable(priv->vbus_supply,
 					   (type == USB_INIT_DEVICE) ?
@@ -563,7 +563,7 @@ static int mx6_init_after_reset(struct ehci_ctrl *dev)
 			return ret;
 		}
 	}
-
+#endif /*CONFIG_MX6ES1*/
 	if (type == USB_INIT_DEVICE)
 		return 0;
 
@@ -735,12 +735,12 @@ static int ehci_usb_probe(struct udevice *dev)
 		printf("Failed to initialize board for USB\n");
 		return ret;
 	}
-
+#ifndef CONFIG_MX6ES1
 	ret = device_get_supply_regulator(dev, "vbus-supply",
 					  &priv->vbus_supply);
 	if (ret)
 		debug("%s: No vbus supply\n", dev->name);
-
+#endif /*CONFIG_MX6ES1*/
 	ret = ehci_get_usb_phy(dev);
 	if (ret) {
 		debug("%s: fail to get USB PHY base\n", dev->name);
@@ -759,7 +759,7 @@ static int ehci_usb_probe(struct udevice *dev)
 		if (priv->init_type != type)
 			return -ENODEV;
 	}
-
+#ifndef CONFIG_MX6ES1
 	if (priv->vbus_supply) {
 		ret = regulator_set_enable(priv->vbus_supply,
 					   (priv->init_type == USB_INIT_DEVICE) ?
@@ -769,7 +769,7 @@ static int ehci_usb_probe(struct udevice *dev)
 			return ret;
 		}
 	}
-
+#endif /*CONFIG_MX6ES1*/
 	if (priv->init_type == USB_INIT_HOST) {
 		setbits_le32(&ehci->usbmode, CM_HOST);
 		writel(CONFIG_MXC_USB_PORTSC, &ehci->portsc);

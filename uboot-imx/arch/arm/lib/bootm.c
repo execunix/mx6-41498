@@ -60,7 +60,7 @@ void arch_lmb_reserve(struct lmb *lmb)
 	 * pointer.
 	 */
 	sp = get_sp();
-	debug("## Current stack ends at 0x%08lx ", sp);
+	debug("## Current stack ends at 0x%08lx\n", sp);
 
 	/* adjust sp by 4K to be safe */
 	sp -= 4096;

@@ -102,11 +102,15 @@ int _log(enum log_category_t cat, enum log_level_t level, const char *file,
 		      pr_fmt(_fmt), ##_args); \
 	})
 
+#ifdef CONFIG_MX6ES1MFG
+#define _DEBUG	1
+#else /*CONFIG_MX6ES1MFG*/
 #ifdef DEBUG
 #define _DEBUG	1
 #else
-#define _DEBUG	0
+#define _DEBUG	1/*0*/
 #endif
+#endif /*CONFIG_MX6ES1MFG*/
 
 #ifdef CONFIG_SPL_BUILD
 #define _SPL_BUILD	1

@@ -22,7 +22,11 @@
 
 /* MMC Configs */
 #define CONFIG_SYS_FSL_ESDHC_ADDR      0
+#ifdef CONFIG_MX6ES1
+#define CONFIG_SYS_FSL_ESDHC_HAS_DDR_MODE
+#endif
 
+#ifndef CONFIG_MX6ES1
 #define CONFIG_FEC_MXC
 #define CONFIG_MII
 #define IMX_FEC_BASE			ENET_BASE_ADDR
@@ -36,6 +40,7 @@
 
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_ATHEROS
+#endif /*CONFIG_MX6ES1*/
 
 #ifdef CONFIG_MX6S
 #define SYS_NOSMP "nosmp"
@@ -179,6 +184,12 @@
 
 #else
 
+#ifdef CONFIG_MX6ES1
+#define BOOTARGS_APPENDS " vmalloc=256M video=mxcfb0:dev=ldb,if=RGB24,fbpix=RGB32,bpp=32"
+#else
+#define BOOTARGS_APPENDS ""
+#endif
+
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	CONFIG_MFG_ENV_SETTINGS \
 	TEE_ENV \
@@ -219,7 +230,7 @@
 	EMMC_ENV	  \
 	"smp=" SYS_NOSMP "\0"\
 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
-		"root=${mmcroot}\0" \
+		"root=${mmcroot}" BOOTARGS_APPENDS "\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
@@ -443,7 +454,12 @@
 #endif
 
 /* Framebuffer */
+#ifdef CONFIG_MX6ES1
+#ifdef CONFIG_VIDEO
 #define CONFIG_VIDEO_IPUV3
+#endif
+#else /*CONFIG_MX6ES1*/
+x#define CONFIG_VIDEO_IPUV3
 #define CONFIG_VIDEO_BMP_RLE8
 #define CONFIG_SPLASH_SCREEN
 #define CONFIG_SPLASH_SCREEN_ALIGN
@@ -452,6 +468,7 @@
 #define CONFIG_VIDEO_BMP_LOGO
 #define CONFIG_IMX_HDMI
 #define CONFIG_IMX_VIDEO_SKIP
+#endif /*CONFIG_MX6ES1*/
 
 #if defined(CONFIG_ANDROID_SUPPORT)
 #include "mx6sabreandroid_common.h"

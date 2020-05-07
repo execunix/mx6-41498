@@ -23,6 +23,12 @@
 #undef PHYS_SDRAM_SIZE
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
 #endif
+#ifdef CONFIG_MX6ES1
+#undef CONFIG_MXC_UART_BASE
+#define CONFIG_MXC_UART_BASE	UART5_BASE
+#undef PHYS_SDRAM_SIZE
+#define PHYS_SDRAM_SIZE		(512u * 1024 * 1024)
+#endif
 
 #include "mx6sabre_common.h"
 
@@ -60,6 +66,11 @@
 #define CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR  0x800   /* 1MB */
 #define CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS (CONFIG_CMD_SPL_WRITE_SIZE / 512)
 #define CONFIG_SYS_MMCSD_RAW_MODE_KERNEL_SECTOR        0x1000  /* 2MB */
+#endif
+
+#ifdef CONFIG_MX6ES1BL2
+#undef CONFIG_IMX_SEC_INIT
+#undef CONFIG_PARTITIONS
 #endif
 
 #endif                         /* __MX6SABREAUTO_CONFIG_H */

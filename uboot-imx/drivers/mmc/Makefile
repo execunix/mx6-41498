@@ -5,6 +5,10 @@
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
+ifdef CONFIG_MX6ES1BL2
+obj-y += fsl_esdhc.o
+obj-y += mmc.o
+else
 obj-y += mmc.o
 obj-$(CONFIG_$(SPL_)DM_MMC) += mmc-uclass.o
 obj-$(CONFIG_$(SPL_)MMC_WRITE) += mmc_write.o
@@ -65,3 +69,4 @@ obj-$(CONFIG_MMC_SDHCI_ZYNQ)		+= zynq_sdhci.o
 obj-$(CONFIG_MMC_SUNXI)			+= sunxi_mmc.o
 obj-$(CONFIG_MMC_UNIPHIER)		+= uniphier-sd.o
 obj-$(CONFIG_MMC_BCM2835)		+= bcm2835_sdhost.o
+endif

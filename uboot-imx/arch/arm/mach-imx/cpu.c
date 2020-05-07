@@ -272,6 +272,9 @@ int print_cpuinfo(void)
 		puts("Commercial temperature grade ");
 		break;
 	}
+#if defined(CONFIG_MX6ES1BL2)
+	printf("(%dC to %dC)\n", minc, maxc);
+#else /*CONFIG_MX6ES1BL2*/
 	printf("(%dC to %dC)", minc, maxc);
 #if	defined(CONFIG_NXP_TMU)
 	ret = uclass_get_device_by_name(UCLASS_THERMAL, "cpu-thermal", &thermal_dev);
@@ -288,6 +291,7 @@ int print_cpuinfo(void)
 	} else {
 		debug(" - invalid sensor device\n");
 	}
+#endif /*CONFIG_MX6ES1BL2*/
 #endif
 
 #if defined(CONFIG_DBG_MONITOR)

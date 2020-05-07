@@ -20,8 +20,12 @@ obj-y += bootretry.o
 endif
 
 # # boards
+ifdef CONFIG_MX6ES1BL2
+obj-y += bl2/
+else
 obj-y += board_f.o
 obj-y += board_r.o
+endif
 obj-$(CONFIG_DISPLAY_BOARDINFO) += board_info.o
 obj-$(CONFIG_DISPLAY_BOARDINFO_LATE) += board_info.o
 
@@ -92,7 +96,9 @@ else
 obj-$(CONFIG_SPL_SERIAL_SUPPORT) += console.o
 endif
 else
+ifndef CONFIG_MX6ES1BL2
 obj-y += console.o
+endif
 endif
 obj-$(CONFIG_CROS_EC) += cros_ec.o
 obj-y += dlmalloc.o

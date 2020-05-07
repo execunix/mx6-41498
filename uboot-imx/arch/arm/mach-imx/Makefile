@@ -134,6 +134,9 @@ ifeq ($(CONFIG_QSPI_BOOT),y)
 	@rm qspi.tmp qspi.bin
 	@echo "Packed QSPI header with $@"
 endif
+ifeq ($(CONFIG_MX6ES1MFG),y)
+	cp u-boot.imx u-boot-mfg.imx
+endif
 
 ifeq ($(CONFIG_OF_SEPARATE),y)
 MKIMAGEFLAGS_u-boot-dtb.imx = -n $(filter-out %$(PLUGIN).bin $(QSPI_HEADER) $< $(PHONY),$^) -T imximage \
