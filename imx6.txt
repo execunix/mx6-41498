@@ -1,0 +1,153 @@
+#######################################################################
+# hexdump -C /sys/firmware/devicetree/base/memory/reg
+
+early_init_dt_scan_nodes
+early_init_dt_scan_memory
+
+request_bus_freq(BUS_FREQ_HIGH);
+
+FSLSSI_I2S_FORMATS
+fsl_ssi_dai_template
+snd_soc_dai_set_sysclk
+
+printk(KERN_ERR "aic3x_hw_params: %d\n", params_width(params));
+
+mxsfb_wait_for_vsync
+wait4vsync
+MXCFB_WAIT_FOR_VSYNC
+mxcfb_pan_display
+
+$ lsb_release -a
+
+#######################################################################
+*.h *.c *.cxx *.S *.mk *onfig *akefile
+*.mk *onfig *akefile
+*.h *.c *.S
+*.dts *.dtsi
+
+#######################################################################
+https://www.nxp.com/support/developer-resources/hardware-development-tools/sabre-development-system/sabre-for-automotive-infotainment-based-on-the-i.mx-6-series:RDIMX6SABREAUTO?tab=Design_Tools_Tab
+https://www.nxp.com/docs/en/user-guide/IMX6SABREINFOQSG.pdf
+
+https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#detailed-supported-distros
+
+#######################################################################
+$ sudo apt-get update
+$ sudo apt-get build-dep qemu
+$ sudo apt-get remove oss4-dev
+$ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm
+$ sudo apt-get install make xsltproc docbook-utils fop dblatex xmlto
+http://downloads.yoctoproject.org/releases/yocto/yocto-3.0.1/buildtools/
+$ sh ~/Downloads/x86_64-buildtools-nativesdk-standalone-3.0.1.sh
+$ . /opt/poky/3.0.1/environment-setup-x86_64-pokysdk-linux
+$ source oe-init-build-env
+$ source oe-init-build-env ~/mybuilds
+$ bitbake buildtools-tarball
+
+imx6qsabreauto
+
+#######################################################################
+$ . /opt/poky/3.0.1/environment-setup-x86_64-pokysdk-linux
+$ mkdir imx-yocto-bsp
+$ cd imx-yocto-bsp
+$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-rocko -m imx-4.9.88-2.0.0_ga.xml
+$ repo sync
+$ cd sources/poky
+$ . oe-init-build-env
+$ bitbake buildtools-tarball
+$ cd tmp/deploy/sdk
+$ sh x86_64-buildtools-nativesdk-standalone-2.4.2.sh
+
+#######################################################################
+# export FB_MULTI_BUFFER=4
+# echo 0 > /sys/class/graphics/fb1/blank
+# echo -e "\033[9;0]" > /dev/tty1
+
+> setenv mmcargs 'setenv bootargs console=${console},${baudrate} ${smp} root=${mmcroot} video=mxcfb0:dev=ldb,if=RGB24'
+> setenv bootdelay 0
+> saveenv
+
+#######################################################################
+$ mkdir ~/bin
+$ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+$ chmod a+x ~/bin/repo
+$ PATH=${PATH}:~/bin
+
+#######################################################################
+$ . /mnt/work/bin/poky/2.4.2/environment-setup-x86_64-pokysdk-linux
+$ mkdir imx-yocto-bsp
+$ cd imx-yocto-bsp
+$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-warrior -m imx-4.19.35-1.1.0.xml
+$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-sumo -m imx-4.14.98-2.0.0_ga.xml
+$ repo sync
+$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto source fsl-setup-release.sh -b build-fb
+$ bitbake fsl-image-validation-imx
+$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake fsl-image-validation-imx -c populate_sdk
+$ bitbake core-image-minimal
+$ bitbake fsl-image-mfgtool-initramfs
+x$ bitbake core-image-base
+x$ bitbake fsl-image-qt5-validation-imx
+x$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake core-image-base -c populate_sdk
+x$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake fsl-image-qt5-validation-imx -c populate_sdk
+
+$ bitbake linux-mfgtool
+$ bitbake u-boot-mfgtool
+$ bitbake u-boot-imx-mfgtool
+$ bitbake -c cleanall linux-mfgtool
+$ bitbake linux-imx -c compile -f
+$ bitbake linux-imx -c deploy
+$ cp tmp/deploy/images/uImage /media/Boot
+
+$ source setup-environment build-fb
+$ echo "UBOOT_CONFIG = \"emmc\"" >> conf/local.conf
+$ MACHINE=imx6qsabreauto bitbake -c deploy u-boot-imx
+$ MACHINE=imx6qsabreauto bitbake u-boot-imx
+$ MACHINE=imx6qsabreauto bitbake linux-imx
+
+imx-yocto-bsp/build-fb/tmp/work/imx6qsabreauto-poky-linux-gnueabi/linux-imx/4.14.98-r0/git
+imx-yocto-bsp/build-fb/tmp/work/imx6qsabreauto-poky-linux-gnueabi/u-boot-imx/2018.03-r0/git
+
+#######################################################################
+$ . /mnt/work/bin/fsl-imx-fb/4.14.98/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
+$ export ARCH=arm
+
+$ git clone https://source.codeaurora.org/external/imx/uboot-imx -b imx_v2017.03_4.9.88_2.0.0_ga
+$ git clone https://source.codeaurora.org/external/imx/uboot-imx -b rel_imx_4.14.98-2.0.0_ga
+$ git clone https://source.codeaurora.org/external/imx/uboot-imx
+$ cd uboot-imx
+$ make clean
+x$ make mx6qsabreauto_defconfig
+x$ make u-boot.imx
+$ make mx6es1mfg_defconfig
+$ make -j3 u-boot.imx
+$ make mx6es1_defconfig
+$ make -j3 u-boot.imx
+
+$ git clone https://source.codeaurora.org/external/imx/linux-imx -b imx_4.9.88_2.0.0_ga
+$ git clone https://source.codeaurora.org/external/imx/linux-imx -b rel_imx_4.14.98-2.0.0_ga
+$ cd linux-imx
+$ make imx_v7_defconfig
+$ make mx6es1mfg_defconfig
+$ make -j3
+$ cp -v arch/arm/boot/zImage arch/arm/boot/zImage-mfg
+$ make mx6es1_defconfig
+$ make -j3
+
+#######################################################################
+M1:	Milestone 1
+RC:	Release Candidate
+GA:	General Availability
+DFU:	Device Firmware Upgrade
+TEE:	Trusted Excusion Environment
+
+#######################################################################
+# tar cvpjf ../rootfs.tar.bz2 .
+
+$ dd if=initramfs.cpio.gz.u-boot of=initramfs.cpio.gz bs=64 skip=1
+$ gunzip initramfs.cpio.gz
+# cpio -i < ../initramfs.cpio
+
+$ find . | cpio -H newc -o | gzip > ../newrootfs.cpio.gz
+$ mkimage -A arm -O linux -T ramdisk -n "Initial Ram Disk" -d ../newrootfs.cpio.gz ../newrootfs.cpio.gz.u-boot
+
+#######################################################################

@@ -1,0 +1,83 @@
+uuu_version 1.0.1
+
+# loading u-boot-mfg
+SDP: dcd -f u-boot-mfg.imx
+SDP: write -f u-boot-mfg.imx -ivt 0
+# loading kernel
+SDP: write -f zImage-mfg -addr 0x12000000
+# loading device tree
+SDP: write -f imx6q-es1-mfg.dtb -addr 0x18000000
+# loading initramfs
+SDP: write -f initramfs-mfg.cpio.gz.u-boot -addr 0x12c00000
+# jumping to os image...
+SDP: jump -f u-boot-mfg.imx
+
+# sleep 1s to wait mmcblk ready
+FBK: ucmd sleep 1
+# partitioning...
+FBK: ucp mksdcard.sh.tar t:/tmp
+FBK: ucmd tar xf /tmp/mksdcard.sh.tar -C /tmp
+FBK: ucmd sh /tmp/mksdcard.sh /dev/mmcblk2
+# clear u-boot arg
+#FBK: ucmd dd if=/dev/zero of=/dev/mmcblk2 bs=1k seek=768 conv=fsync count=136
+
+# access boot partition 1
+FBK: ucmd echo 0 > /sys/block/mmcblk2boot0/force_ro
+# write u-boot.imx
+FBK: ucp u-boot.imx t:/tmp
+FBK: ucmd dd if=/tmp/u-boot.imx of=/dev/mmcblk2boot0 bs=512 seek=2
+# write bootcfg.txt
+FBK: ucp bootcfg.txt t:/tmp
+FBK: ucmd dd if=/tmp/bootcfg.txt of=/dev/mmcblk2boot0 bs=512 seek=1792
+# write bootenv.txt
+FBK: ucp bootenv.txt t:/tmp
+FBK: ucmd dd if=/tmp/bootenv.txt of=/dev/mmcblk2boot0 bs=512 seek=1920
+# write imx6q-es1.dtb
+FBK: ucp imx6q-es1.dtb t:/tmp
+FBK: ucmd dd if=/tmp/imx6q-es1.dtb of=/dev/mmcblk2boot0 bs=512 seek=2048
+# write zImage
+FBK: ucp zImage t:/tmp
+FBK: ucmd dd if=/tmp/zImage of=/dev/mmcblk2boot0 bs=512 seek=2560
+# write bootlogo
+FBK: ucp bootlogo.png t:/tmp
+FBK: ucmd dd if=/tmp/bootlogo.png of=/dev/mmcblk2boot0 bs=512 seek=18944
+# write initramfs
+# tbd - FBK: ucp initramfs.cpio.gz.u-boot t:/tmp
+# tbd - FBK: ucmd dd if=/tmp/initramfs.cpio.gz.u-boot of=/dev/mmcblk2boot0 bs=512 seek=????
+# read-only access boot partition 1
+FBK: ucmd echo 1 > /sys/block/mmcblk2boot0/force_ro
+# enable boot partition 1 to boot
+FBK: ucmd mmc bootpart enable 1 1 /dev/mmcblk2
+
+# wait for the partition ready
+FBK: ucmd while [ ! -e /dev/mmcblk2p1 ]; do sleep 1; echo waiting...; done
+
+# formatting partition 1
+FBK: ucmd mkfs.vfat /dev/mmcblk2p1
+FBK: ucmd mkdir -p /mnt/mmcblk2p1
+FBK: ucmd mount -t vfat /dev/mmcblk2p1 /mnt/mmcblk2p1
+# write zImage
+FBK: ucp zImage t:/tmp
+FBK: ucmd cp /tmp/zImage /mnt/mmcblk2p1/zImage
+# write imx6q-es1.dtb
+FBK: ucp imx6q-es1.dtb t:/tmp
+FBK: ucmd cp /tmp/imx6q-es1.dtb /mnt/mmcblk2p1/imx6q-sabreauto.dtb
+# write initramfs
+# tbd - FBK: ucp initramfs.cpio.gz.u-boot t:/tmp
+# tbd - FBK: ucmd cp /tmp/initramfs.cpio.gz.u-boot /mnt/mmcblk2p1/
+# unmount partition 1
+FBK: ucmd umount /mnt/mmcblk2p1
+
+# formatting partition 2
+FBK: ucmd mkfs.ext3 -F -j /dev/mmcblk2p2
+FBK: ucmd mkdir -p /mnt/mmcblk2p2
+FBK: ucmd mount -t ext3 /dev/mmcblk2p2 /mnt/mmcblk2p2
+# send and write rootfs
+FBK: acmd EXTRACT_UNSAFE_SYMLINKS=1 tar -jxv -C /mnt/mmcblk2p2
+FBK: ucp rootfs.tar.bz2 t:-
+# sync rootfs
+FBK: sync
+# unmount partition 2
+FBK: ucmd umount /mnt/mmcblk2p2
+
+# done
