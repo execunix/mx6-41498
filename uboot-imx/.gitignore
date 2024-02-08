@@ -1,68 +1,87 @@
-# Prerequisites
-*.d
-
-# Object files
+#
+# NOTE! Don't add files that are generated in specific
+# subdirectories here. Add them in the ".gitignore" file
+# in that subdirectory instead.
+#
+# Normal rules
+#
+.*
 *.o
-*.ko
-*.obj
-*.elf
-
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
+*.o.*
 *.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
+*.s
 *.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.cmd
-*.dtb
 *.mod.c
-generated/
-.tmp_versions/
-modules.builtin
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+*.i
+*.lst
+*.order
+*.elf
+*.swp
+*.bin
+*.patch
+*.cfgtmp
 
-.config
-arch/arm/lib/asm-offsets.s
-board/freescale/mx6sabreauto/imx6es1.cfg.cfgtmp
-include/config/
-include/generated/
-lib/asm-offsets.s
-u-boot
-u-boot-nodtb.bin
-u-boot.bin
-u-boot.cfg
-u-boot.imx
-u-boot.imx.log
-u-boot.lds
+# host programs on Cygwin
+*.exe
+
+# Build tree
+/build-*
+
+#
+# Top-level generic files
+#
+fit-dtb.blob
+/MLO*
+/SPL*
+/System.map
+/u-boot*
+/boards.cfg
+
+#
+# git files that we don't want to ignore even it they are dot-files
+#
+!.gitignore
+!.mailmap
+
+#
+# Generated files
+#
+/LOG
+/spl/
+/tpl/
+/defconfig
+
+#
+# Generated include files
+#
+/include/config/
+/include/generated/
+
+# stgit generated dirs
+patches-*
+.stgit-edit.txt
+
+# quilt's files
+patches
+series
+
+# gdb files
+.gdb_history
+
+# cscope files
+cscope.*
+
+# tags files
+/tags
+/ctags
+/etags
+
+# gnu global files
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
+*.orig
+*~
+\#*#

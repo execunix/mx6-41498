@@ -32,11 +32,26 @@ https://www.nxp.com/docs/en/user-guide/IMX6SABREINFOQSG.pdf
 https://www.yoctoproject.org/docs/current/ref-manual/ref-manual.html#detailed-supported-distros
 
 #######################################################################
-$ sudo apt-get update
-$ sudo apt-get build-dep qemu
-$ sudo apt-get remove oss4-dev
-$ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm
-$ sudo apt-get install make xsltproc docbook-utils fop dblatex xmlto
+$ docker commit -m "add user" -a "execunix" imx6hdd1 bionic.yocto
+$ docker run -d -it --name imx6hdd1 -v /mnt:/mnt ubuntu:bionic
+$ docker run -d -it --name imx6hdd1 -v /mnt:/mnt bionic.yocto
+$ docker run -d -it --user execunix --name imx6hdd1 -v /mnt:/mnt bionic.yocto
+$ find /mnt/hdd1 -user root -exec chown execunix:execunix {} \;
+
+$ apt-get update
+$ apt-get install vim nano
+$ vi /etc/apt/sources.list
+$ apt-get update
+$ apt-get build-dep qemu
+$ apt-get remove oss4-dev
+$ apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm rsync curl
+x$ apt-get install python3-subunit mesa-common-dev zstd liblz4-tool
+$ apt-get install make xsltproc docbook-utils fop dblatex xmlto
+$ apt-get install dialog locales
+$ dpkg-reconfigure locales
+< 158:en_US.UTF-8, 3:UTF-8 >
+$ update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+$ export LANG=en_US.UTF-8
 http://downloads.yoctoproject.org/releases/yocto/yocto-3.0.1/buildtools/
 $ sh ~/Downloads/x86_64-buildtools-nativesdk-standalone-3.0.1.sh
 $ . /opt/poky/3.0.1/environment-setup-x86_64-pokysdk-linux
@@ -44,19 +59,18 @@ $ source oe-init-build-env
 $ source oe-init-build-env ~/mybuilds
 $ bitbake buildtools-tarball
 
-imx6qsabreauto
-
 #######################################################################
-$ . /opt/poky/3.0.1/environment-setup-x86_64-pokysdk-linux
-$ mkdir imx-yocto-bsp
-$ cd imx-yocto-bsp
-$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-rocko -m imx-4.9.88-2.0.0_ga.xml
-$ repo sync
-$ cd sources/poky
+$ cd imx-yocto-bsp/sources/poky
 $ . oe-init-build-env
 $ bitbake buildtools-tarball
 $ cd tmp/deploy/sdk
-$ sh x86_64-buildtools-nativesdk-standalone-2.4.2.sh
+$ ./x86_64-buildtools-nativesdk-standalone-2.4.2.sh
+$ . /opt/poky/2.5.2/environment-setup-x86_64-pokysdk-linux
+$ export GIT_SSL_NO_VERIFY=0
+$ git config --global user.name "execunix"
+$ git config --global user.email "execunix@gmail.com"
+$ git config --global http.sslVerify false
+$ git config --global https.sslVerify false
 
 #######################################################################
 # export FB_MULTI_BUFFER=4
@@ -74,21 +88,31 @@ $ chmod a+x ~/bin/repo
 $ PATH=${PATH}:~/bin
 
 #######################################################################
-$ . /mnt/work/bin/poky/2.4.2/environment-setup-x86_64-pokysdk-linux
+# https://github.com/nxp-imx/imx-manifest/blob/imx-linux-sumo/README
+# To download the 4.14.98-2.0.0 GA release
 $ mkdir imx-yocto-bsp
 $ cd imx-yocto-bsp
-$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-warrior -m imx-4.19.35-1.1.0.xml
-$ repo init -u https://source.codeaurora.org/external/imx/imx-manifest -b imx-linux-sumo -m imx-4.14.98-2.0.0_ga.xml
-$ repo sync
+$ repo init -u https://github.com/nxp-imx/imx-manifest -b imx-linux-sumo -m imx-4.14.98-2.0.0_ga.xml
+$ repo sync -j8
+
+sysctl -n fs.inotify.max_user_watches
+8192
+sudo sysctl -n -w fs.inotify.max_user_watches=524288
+
+# [MACHINE=<machine>] [DISTRO=fsl-imx-<backend>] source ./fsl-setup-release.sh -b bld-<backend>
+====
 $ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto source fsl-setup-release.sh -b build-fb
-$ bitbake fsl-image-validation-imx
-$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake fsl-image-validation-imx -c populate_sdk
+$ DISTRO=fsl-imx-xwayland MACHINE=imx6qsabreauto source fsl-setup-release.sh -b build-xwayland
 $ bitbake core-image-minimal
+$ bitbake core-image-minimal -c populate_sdk
+$ bitbake fsl-image-multimedia-full
+$ bitbake fsl-image-multimedia-full -c populate_sdk
+$ bitbake fsl-image-gui
+$ bitbake fsl-image-gui -c populate_sdk
+
+#
+
 $ bitbake fsl-image-mfgtool-initramfs
-x$ bitbake core-image-base
-x$ bitbake fsl-image-qt5-validation-imx
-x$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake core-image-base -c populate_sdk
-x$ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto bitbake fsl-image-qt5-validation-imx -c populate_sdk
 
 $ bitbake linux-mfgtool
 $ bitbake u-boot-mfgtool
@@ -98,40 +122,61 @@ $ bitbake linux-imx -c compile -f
 $ bitbake linux-imx -c deploy
 $ cp tmp/deploy/images/uImage /media/Boot
 
-$ source setup-environment build-fb
+$ source setup-environment build-xwayland
 $ echo "UBOOT_CONFIG = \"emmc\"" >> conf/local.conf
 $ MACHINE=imx6qsabreauto bitbake -c deploy u-boot-imx
 $ MACHINE=imx6qsabreauto bitbake u-boot-imx
 $ MACHINE=imx6qsabreauto bitbake linux-imx
 
-imx-yocto-bsp/build-fb/tmp/work/imx6qsabreauto-poky-linux-gnueabi/linux-imx/4.14.98-r0/git
-imx-yocto-bsp/build-fb/tmp/work/imx6qsabreauto-poky-linux-gnueabi/u-boot-imx/2018.03-r0/git
+./tmp/work-shared/imx6qsabreauto/kernel-source
+./tmp/work/imx6qsabreauto-poky-linux-gnueabi/linux-imx/5.10.72+gitAUTOINC+a68e31b63f-r0/git
+./tmp/work/imx6qsabreauto-poky-linux-gnueabi/u-boot-imx/2021.04-r0/git
 
 #######################################################################
-$ . /mnt/work/bin/fsl-imx-fb/4.14.98/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
+$ . /opt/fsl-imx-xwayland/4.14-sumo/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
 $ export ARCH=arm
 
-$ git clone https://source.codeaurora.org/external/imx/uboot-imx -b imx_v2017.03_4.9.88_2.0.0_ga
-$ git clone https://source.codeaurora.org/external/imx/uboot-imx -b rel_imx_4.14.98-2.0.0_ga
-$ git clone https://source.codeaurora.org/external/imx/uboot-imx
+$ cd /mnt/work/mx6/mx6-41498
+$ . envsetup.sh
 $ cd uboot-imx
-$ make clean
-x$ make mx6qsabreauto_defconfig
-x$ make u-boot.imx
+$ make distclean
+$ make mx6qsabreauto_defconfig
 $ make mx6es1mfg_defconfig
-$ make -j3 u-boot.imx
 $ make mx6es1_defconfig
-$ make -j3 u-boot.imx
-
-$ git clone https://source.codeaurora.org/external/imx/linux-imx -b imx_4.9.88_2.0.0_ga
-$ git clone https://source.codeaurora.org/external/imx/linux-imx -b rel_imx_4.14.98-2.0.0_ga
+$ make -j8 u-boot.imx
+$ make distclean
 $ cd linux-imx
 $ make imx_v7_defconfig
+$ make -j8
+$ make distclean
+$ make imx6es1mfg_defconfig
+$ make -j8
+$ cp -v arch/arm/boot/zImage arch/arm/boot/zImage-mfg
+$ make imx6es1_defconfig
+$ make -j8
+
+$ cd /mnt/work/mx6/mx6-51072
+
+$ git clone https://github.com/nxp-imx/uboot-imx
+$ cd uboot-imx
+$ git switch lf_v2021.04
+$ make clean
+x$ make mx6qsabreauto_defconfig
 $ make mx6es1mfg_defconfig
-$ make -j3
+$ make -j8 u-boot.imx
+$ make mx6es1_defconfig
+$ make -j8 u-boot.imx
+
+$ git clone https://github.com/nxp-imx/linux-imx
+$ cd linux-imx
+$ git switch lf-5.10.y
+$ make clean
+x$ make imx_v7_defconfig
+$ make imx6es1mfg_defconfig
+$ make -j8
 $ cp -v arch/arm/boot/zImage arch/arm/boot/zImage-mfg
 $ make mx6es1_defconfig
-$ make -j3
+$ make -j8
 
 #######################################################################
 M1:	Milestone 1
@@ -141,6 +186,7 @@ DFU:	Device Firmware Upgrade
 TEE:	Trusted Excusion Environment
 
 #######################################################################
+$ su
 # tar cvpjf ../rootfs.tar.bz2 .
 
 $ dd if=initramfs.cpio.gz.u-boot of=initramfs.cpio.gz bs=64 skip=1
@@ -151,3 +197,16 @@ $ find . | cpio -H newc -o | gzip > ../newrootfs.cpio.gz
 $ mkimage -A arm -O linux -T ramdisk -n "Initial Ram Disk" -d ../newrootfs.cpio.gz ../newrootfs.cpio.gz.u-boot
 
 #######################################################################
+sudo apt-get update
+
+sudo apt-get install -y -q --no-install-recommends -o Dpkg::Options::="--force-confdef" \
+-o Dpkg::Options::="--force-confold" build-essential chrpath cpio diffstat file  \
+g++-multilib gawk gcc-multilib git-core locales openssh-client python python3 \
+socat sudo texinfo tmux unzip wget
+
+sudo rm -rf /var/lib/apt/lists/*
+
+sudo locale-gen en_US.UTF-8
+
+export LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+

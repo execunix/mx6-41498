@@ -94,7 +94,7 @@ static int imx6q_set_target(struct cpufreq_policy *policy, unsigned int index)
 		old_freq / 1000, volt_old / 1000,
 		new_freq / 1000, volt / 1000);
 #ifdef CONFIG_MX6ES1
-	printk(KERN_ERR "cpu: %4u MHz, %4ld mV\n", new_freq / 1000, volt / 1000);
+	//printk(KERN_ERR "cpu: %4u MHz, %4ld mV\n", new_freq / 1000, volt / 1000);
 #endif
 	/*
 	 * CPU freq is increasing, so need to ensure
