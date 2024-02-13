@@ -1,0 +1,178 @@
+XCZU6CG-1FFVC900I
+
+Build U-Boot - Xilinx Wiki - Confluence (atlassian.net)
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841973/Build+U-Boot
+
+Zynq UltraScale+ MPSoC ZCU102  xilinx_zynqmp_zcu102_rev1_0_defconfig
+Zynq UltraScale+ MPSoC ZCU102 Evaluation Kit (xilinx.com)
+https://www.xilinx.com/products/boards-and-kits/ek-u1-zcu102-g.html
+
+·         Configuring U-Boot (< 2020.1 Release)
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841973/Build+U-Boot#BuildU-Boot-ConfiguringU-Boot(%3C2020.1Release)
+
+git clone https://github.com/Xilinx/linux-xlnx.git
+git clone https://github.com/Xilinx/u-boot-xlnx.git
+git clone https://github.com/Xilinx/device-tree-xlnx.git
+git clone https://git.kernel.org/pub/scm/utils/dtc/dtc.git
+git clone https://github.com/Xilinx/arm-trusted-firmware.git
+git clone https://github.com/Xilinx/xen.git
+git clone https://github.com/Xilinx/embeddedsw.git
+
+Zynq UltraScale+ MPSoC ZCU102 Evaluation Kit
+
+sudo dpkg-reconfigure dash
+sudo apt install gcc-multilib
+sudo apt install uuid-dev
+
+
+sysctl -n fs.inotify.max_user_watches
+8192
+sudo sysctl -n -w fs.inotify.max_user_watches=524288
+
+git clone https://github.com/Xilinx/u-boot-xlnx.git
+. /mnt/hdd3/xilinx/petalinux2018/settings.sh
+. /mnt/hdd3/xilinx/petalinux2022/settings.sh
+x export CROSS_COMPILE=aarch64-linux-gnu-
+export CROSS_COMPILE=aarch64-none-elf-
+export ARCH=aarch64
+//export DEVICE_TREE="zynqmp-zcu102-rev1.0"
+export DEVICE_TREE="zynqmp-zcu104-revC"
+export DEVICE_TREE="zynqmp-zcu102-nex1"
+make distclean
+make xilinx_zynqmp_zcu104_revC_defconfig
+make xilinx_zynqmp_zcu102_nex1_defconfig
+make -j16
+cp u-boot.elf /tftpboot
+
+x export CROSS_COMPILE=arm-linux-gnueabihf-
+export CROSS_COMPILE=arm-none-eabi-
+export DEVICE_TREE=zynq-zc702
+export ARCH=arm
+make distclean
+make xilinx_zynq_virt_defconfig
+make xilinx_zynq_zc702_defconfig
+make -j16
+
+git clone https://github.com/Xilinx/linux-xlnx.git
+. /mnt/hdd3/xilinx/petalinux2018/settings.sh
+. /mnt/hdd3/xilinx/petalinux2022/settings.sh
+export CROSS_COMPILE=aarch64-none-elf-
+export ARCH=arm64
+make ARCH=arm64 distclean
+make ARCH=arm64 xilinx_zynqmp_defconfig
+//make ARCH=arm64 xlnxdt_zynqmp_defconfig
+make ARCH=arm64 menuconfig
+//make UIMAGE_LOADADDR=0x3000000 -j16
+make ARCH=arm64 -j16
+cp arch/arm64/boot/Image /tftpboot
+cp arch/arm64/boot/dts/xnex1/system-top.dtb /tftpboot
+
+1. 우분투 패키지 추가
+$ sudo dpkg-reconfigure dash  => 실행 후 "NO" 선택
+$ sudo apt install gcc-multilib g++-multilib zlib1g:i386
+$ sudo apt install uuid-dev
+
+2. SDK 다운로드 및 설치
+PetaLinux Installer (TAR/GZIP - 2.58 GB)
+https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-v2022.2-10141622-installer.run
+$ chmod +x petalinux-v2022.2-10141622-installer.run
+$ ./petalinux-v2022.2-10141622-installer.run
+$ ./petalinux-v2022.2-10141622-installer.run --dir /opt/petalinux/2022.2 --platform "arm aarch64"
+$ sudo mkdir -p /opt/petalinux/2022.2
+$ sudo chown -R execunix:execunix /opt/petalinux
+$ ./petalinux-v2022.2-10141622-installer.run -d /opt/petalinux/2022.2 -p "arm aarch64"
+
+3. uboot 다운로드 및 빌드
+$ git clone https://github.com/Xilinx/u-boot-xlnx.git
+$ cd u-boot-xlnx
+$ . <sdk경로>/settings.sh
+$ export CROSS_COMPILE=aarch64-linux-gnu-    => 툴체인이 존재하지 않아서 빌드안됨 (문서 업데이트 안된듯)
+$ export CROSS_COMPILE=aarch64-none-elf-
+$ export ARCH=aarch64
+$ make distclean
+$ make xilinx_zynqmp_virt_defconfig
+$ export DEVICE_TREE="zynqmp-zcu102-rev1.0"
+$ make -j8
+
+4. linux 다운로드 및 빌드
+$ git clone https://github.com/Xilinx/linux-xlnx.git
+$ cd linux-xlnx
+$ . <sdk경로>/settings.sh
+$ export CROSS_COMPILE=aarch64-none-elf-
+$ export ARCH=arm64
+$ make ARCH=arm64 distclean
+$ make ARCH=arm64 xilinx_zynqmp_defconfig
+$ make ARCH=arm64 -j8
+
+
+cd /mnt/hdd3/xilinx
+./Xilinx_Unified_2022.2_1014_8888_Lin64.bin
+execunix@gmail.com : Rns1Tka2&#
+
+
+//
+// xilinx-zcu102-v2022
+//
+cd /mnt/hdd3/xilinx/work
+. /mnt/hdd3/xilinx/petalinux2018/settings.sh
+. /mnt/hdd3/xilinx/petalinux2022/settings.sh
+petalinux-create -t project -s /mnt/hdd3/xilinx/xilinx-zcu102-v2022.2-10141622.bsp
+cd /mnt/hdd3/xilinx/work/xilinx-zcu102-2022.2
+petalinux-build
+petalinux-package --boot --u-boot --format BIN
+petalinux-boot --qemu --kernel
+
+//
+// git daemon --verbose --export-all
+// sudo mkdir -p /opt/petalinux/2022.2
+// sudo chown -R execunix:execunix /opt/petalinux
+// /mnt/hdd3/xilinx/petalinux-v2022.2-10141622-installer.run
+// xilinx-zcu104-v2018.3 => error git download
+// xilinx-zcu104-v2022.2
+//
+cd /mnt/hdd3/xilinx/work
+. /mnt/hdd3/xilinx/petalinux2018/settings.sh
+. /mnt/hdd3/xilinx/petalinux2022/settings.sh
+petalinux-create -t project -s /mnt/hdd3/xilinx/xilinx-zcu104-v2022.2-10141622.bsp
+cd /mnt/hdd3/xilinx/work/xilinx-zcu104-2022.2
+petalinux-build
+petalinux-build -s
+petalinux-build --sdk
+petalinux-package --sysroot
+petalinux-package --boot --u-boot --format BIN
+petalinux-boot --qemu --kernel
+
+petalinux-config -c rootfs -> Image Features -> Init-manager (sysvinit)
+<project_dir>/project-spec/meta-user/conf/petalinuxbsp.conf
+INIT_MANAGER_DEFAULT:forcevariable = "sysvinit"
+petalinux-build -x cleanall
+petalinux-build
+
+petalinux-build -c your_app -x do_clean
+petalinux-build -c your_app
+//petalinux-build -x do_populate_sysroot
+petalinux-build -c rootfs
+petalinux-build -x package
+petalinux-package ...
+
+
+ll /mnt/hdd3/xilinx/work/xilinx-zcu102-2022.2
+. /mnt/hdd3/xilinx/Vivado/2022.2/settings64.sh
+cd /mnt/hdd3/xilinx/work
+petalinux-create --type project --template zynqMP --name digitron
+
+cd /mnt/hdd3/xilinx/work/digitron
+. /mnt/hdd3/xilinx/petalinux2018/settings.sh
+. /mnt/hdd3/xilinx/petalinux2022/settings.sh
+. /mnt/hdd3/xilinx/Vivado/2022.2/settings64.sh
+petalinux-config --get-hw-description /mnt/hdd3/xilinx/Vivado/2022.2/data/embeddedsw/lib/fixed_hwplatforms/zcu102.xsa
+petalinux-build -x mrproper
+petalinux-build
+petalinux-package --boot --u-boot --format BIN
+cd /mnt/hdd3/xilinx/work/xilinx-zcu102-2022.2
+petalinux-config -c rootfs
+petalinux-boot --qemu --prebuilt 3
+petalinux-boot --qemu --u-boot
+petalinux-boot --qemu --kernel
+petalinux-boot --qemu --uboot --pmu-qemu-args" -kernel pmu_rom_qemu_sha3.elf"
+

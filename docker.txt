@@ -1,0 +1,113 @@
+sudo apt-get update
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo systemctl status docker
+sudo docker run hello-world
+sudo usermod -aG docker $USER
+
+docker info
+sudo systemctl stop docker
+sudo systemctl stop docker.socket
+sudo systemctl stop containerd
+
+mkdir -p /mnt/work/tmp
+sudo mv /var/lib/docker /mnt/work/tmp
+sudo vi /etc/docker/daemon.json
+{
+    "data-root": "/mnt/work/tmp/docker"
+}
+sudo systemctl start docker
+docker info
+
+docker run ubuntu:18.04 // bionic
+docker run ubuntu:20.04 // focal
+docker images
+//docker run --restart always --name bionic.yocto -dt ubuntu:18.04
+docker run -it --name bionic.yocto -v /mnt:/mnt ubuntu:bionic
+docker run -it --name bionic.yocto -v /mnt:/mnt -dt ubuntu:18.04
+docker ps
+docker exec -it bionic.yocto /bin/bash
+adduser execunix
+su execunix
+^d ^d
+docker ps
+
+docker start bionic.yocto
+docker attach bionic.yocto
+su execunix
+docker stop bionic.yocto
+
+apt-get update
+//apt-get install openjdk-8-jdk
+apt-get install vim
+vi /etc/apt/sources.list
+> uncomment deb-src
+apt-get update
+apt-get build-dep qemu
+apt-get remove oss4-dev
+apt install libglib2.0-dev libgcrypt20-dev zlib1g-dev autoconf automake libtool bison flex libpixman-1-dev
+apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+     xz-utils debianutils iputils-ping
+apt-get install xterm
+apt-get install libsdl1.2-dev
+apt-get install make xsltproc docbook-utils fop dblatex xmlto
+apt-get install python-git
+apt-get install rsync
+apt-get install dialog locales
+dpkg-reconfigure locales
+→ Select "en_US.UTF-8"
+locale-gen en_US.UTF-8
+update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+vi ~/.bashrc (add 3-line)
+export LANG=en_US.UTF-8
+export LC_TIME=en_US.UTF-8
+export TIME_STYLE="+%Y-%m-%d %H:%M:%S"
+
+apt-get install git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc unzip bc wget
+apt-get install net-tools gawk diffstat chrpath socat xterm autoconf libtool python texinfo libsdl1.2-dev libglib2.0-dev
+apt-get install libssl-dev
+dpkg --add-architecture i386
+apt update
+apt install zlib1g:i386 zlib1g-dev:i386
+
+docker stop bionic.yocto
+docker commit bionic.yocto 192.168.111.15:5000/bionic.yocto
+docker images
+    REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+docker run -it --name bionic.yocto.mnt -v /mnt:/mnt 192.168.111.15:5000/bionic.yocto
+
+docker exec -it bionic.yocto.mnt /bin/bash
+su execunix
+export USER=$(whoami)
+export LANG=en_US.UTF-8
+
+cd /mnt/hdd3/xilinx/work/xilinx-zcu104-2018.3
+cd build/tmp/work/x86_64-nativesdk-petalinux-linux/nativesdk-qemu-xilinx/v2.11.0-xilinx-v2018.3+gitAUTOINC+f70bd86859-r0/git
+====
+vi .git/config
+[submodule "capstone"]
+	active = true
+	url = https://gitlab.com/qemu-project/capstone.git
+[submodule "ui/keycodemapdb"]
+	active = true
+	url = https://gitlab.com/qemu-project/keycodemapdb.git
+[submodule "dtc"]
+	url = https://gitlab.com/qemu-project/dtc.git
+====
+cd /mnt/hdd3/xilinx/work/xilinx-zcu104-2018.3
+cd build/tmp/work/x86_64-nativesdk-petalinux-linux/nativesdk-qemu-xilinx/v2.11.0-xilinx-v2018.3+gitAUTOINC+f70bd86859-r0/git
+#make distclean && rm -rf *-linux-user *-softmmu
+./scripts/git-submodule.sh update ui/keycodemapdb dtc capstone
+
+vi build/conf/local.conf
+
+git config --global url.http://git.qemu.or/git/capstone.git/.insteadOf git://git.qemu.org/capstone.git
+git config --global url.http://git.qemu.or/git/keycodemapdb.git/.insteadOf git://git.qemu.org/keycodemapdb.git
+git config --global url.http://git.qemu.or/git/capstone.git/.insteadOf https://gitlab.com/qemu-project/capstone.git
+git config --global url.http://git.qemu.or/git/keycodemapdb.git/.insteadOf https://gitlab.com/qemu-project/keycodemapdb.git
+git config --global http.sslVerify false
+git config --global https.sslVerify false

@@ -99,6 +99,11 @@ sysctl -n fs.inotify.max_user_watches
 8192
 sudo sysctl -n -w fs.inotify.max_user_watches=524288
 
+docker start bionic.yocto.mnt
+docker attach bionic.yocto.mnt
+su execunix
+docker exec -it bionic.yocto.mnt /bin/bash
+
 # [MACHINE=<machine>] [DISTRO=fsl-imx-<backend>] source ./fsl-setup-release.sh -b bld-<backend>
 ====
 $ DISTRO=fsl-imx-fb MACHINE=imx6qsabreauto source fsl-setup-release.sh -b build-fb

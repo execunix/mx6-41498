@@ -430,7 +430,7 @@ static int mxcfb_map_video_memory(struct fb_info *fbi)
 	load_bootlogo(&bl2hdr, fbi->screen_base);
 #else
 	/* Clear the screen */
-	memset(fbi->screen_base, 0, fbi->fix.smem_len);
+	memset((char *)fbi->screen_base, 0, fbi->fix.smem_len);
 #endif
 
 	return 0;

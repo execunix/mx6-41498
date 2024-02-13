@@ -1,0 +1,45 @@
+cd /mnt/work/mx6rootfs
+dd if=initramfs-mfg1.cpio.gz.u-boot bs=64 skip=1 of=initramfs-mfg1.cpio.gz
+dd if=initramfs-mfg2.cpio.gz.u-boot bs=64 skip=1 of=initramfs-mfg2.cpio.gz
+mkdir initramfs-mfg2
+
+mkdir initramfs-mfg1
+gunzip -c initramfs-mfg1.cpio.gz | sh -c 'cd initramfs-mfg1/ && cpio -i'
+cd  initramfs-mfg1
+
+sh -c 'cd initramfs-mfg1/ && find . | cpio -H newc -o' | gzip -9 > initramfs-mfg1a.cpio.gz
+mkimage -A arm -T ramdisk -C gzip -d initramfs-mfg1a.cpio.gz initramfs-mfg1a.cpio.gz.u-boot
+mkimage -A arm -T ramdisk -C gzip -d ramdisk.image.gz uramdisk.image.gz
+
+####
+
+#gunzip ramdisk0.image.gz
+gunzip ramdisk1.image.gz
+ll ramdisk0.image
+ll ramdisk1.image
+mkdir mnt0
+mkdir mnt1
+sudo mount -o loop ramdisk0.image mnt0
+sudo mount -o loop ramdisk1.image mnt1
+
+sudo bcompare mnt0 mnt1 &
+
+sudo umount mnt1
+sudo umount mnt0
+
+gzip ramdisk1.image
+#gzip ramdisk0.image
+
+// Wrapping the image with a U-Boot header
+mkimage -A arm64 -T ramdisk -C gzip -d ramdisk1.image.gz uramdisk.image.gz
+// Check File Type
+file uramdisk.image.gz
+cp uramdisk.image.gz /tftpboot
+
+// To create an initrd from scratch
+// an empty initrd may be created and then populated with the desired filesystem contents
+// as specified above. To create an empty (8MB) initrd:
+dd if=/dev/zero of=ramdisk1.image bs=1024 count=16384
+mke2fs -F ramdisk1.image -L "ramdisk" -b 1024 -m 0
+tune2fs ramdisk1.image -i 0
+chmod a+rwx ramdisk1.image
