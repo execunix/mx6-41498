@@ -114,6 +114,8 @@ $ bitbake fsl-image-multimedia-full
 $ bitbake fsl-image-multimedia-full -c populate_sdk
 $ bitbake fsl-image-gui
 $ bitbake fsl-image-gui -c populate_sdk
+$ bitbake fsl-image-validation-imx
+$ bitbake fsl-image-qt5-validation-imx
 
 #
 
@@ -127,6 +129,7 @@ $ bitbake linux-imx -c compile -f
 $ bitbake linux-imx -c deploy
 $ cp tmp/deploy/images/uImage /media/Boot
 
+$ source setup-environment build-fb
 $ source setup-environment build-xwayland
 $ echo "UBOOT_CONFIG = \"emmc\"" >> conf/local.conf
 $ MACHINE=imx6qsabreauto bitbake -c deploy u-boot-imx
@@ -138,6 +141,7 @@ $ MACHINE=imx6qsabreauto bitbake linux-imx
 ./tmp/work/imx6qsabreauto-poky-linux-gnueabi/u-boot-imx/2021.04-r0/git
 
 #######################################################################
+$ . /opt/fsl-imx-fb/4.14-sumo/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
 $ . /opt/fsl-imx-xwayland/4.14-sumo/environment-setup-cortexa9hf-neon-poky-linux-gnueabi
 $ export ARCH=arm
 

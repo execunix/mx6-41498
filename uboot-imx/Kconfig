@@ -442,7 +442,7 @@ source "cmd/Kconfig"
 
 source "disk/Kconfig"
 
-#source "dts/Kconfig"
+source "dts/Kconfig"
 
 source "env/Kconfig"
 

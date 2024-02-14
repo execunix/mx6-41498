@@ -593,7 +593,7 @@ int board_phy_config(struct phy_device *phydev)
 #ifndef CONFIG_MX6ES1
 static void disable_lvds(struct display_info_t const *dev)
 {
-x	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
+	struct iomuxc *iomux = (struct iomuxc *)IOMUXC_BASE_ADDR;
 
 	clrbits_le32(&iomux->gpr[2],
 		     IOMUXC_GPR2_LVDS_CH0_MODE_MASK |
@@ -835,7 +835,7 @@ int board_init(void)
 	setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
 #endif
 #endif
-x
+
 	/* I2C 3 Steer */
 	gpio_request(IMX_GPIO_NR(5, 4), "steer logic");
 	gpio_direction_output(IMX_GPIO_NR(5, 4), 1);
@@ -863,7 +863,7 @@ x	setup_iomux_eimnor();
 #endif
 
 #ifdef CONFIG_FEC_MXC
-x	setup_fec();
+	setup_fec();
 #endif
 
 	return 0;

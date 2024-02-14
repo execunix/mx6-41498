@@ -417,7 +417,7 @@ x			/* check FDT blob vs FIT blob */
 		}
 	}
 #ifdef CONFIG_ANDROID_BOOT_IMAGE
-x	else if (genimg_get_format((void *)images->os.start) ==
+	else if (genimg_get_format((void *)images->os.start) ==
 		IMAGE_FORMAT_ANDROID) {
 		ulong fdt_data, fdt_len;
 		android_image_get_second((void *)images->os.start,
