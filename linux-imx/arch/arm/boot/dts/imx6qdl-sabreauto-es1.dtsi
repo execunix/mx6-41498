@@ -28,7 +28,7 @@
 		linux,initrd-start = <0x12c00040>;
 		linux,initrd-end = <0x137b0dd1>;
 #else
-		bootargs = "console=ttymxc3,921600 root=/dev/mmcblk2p2 rootwait rw vmalloc=256M video=mxcfb0:dev=ldb,if=RGB24,fbpix=RGB32,bpp=32 ";
+		bootargs = "console=ttymxc3,921600 root=/dev/mmcblk2p2 rootwait rw vmalloc=256M  cma=32M coherent_pool=4M video=mxcfb0:dev=ldb,if=RGB24,fbpix=RGB32,bpp=32 ";
 		linux,initrd-start = <0x12c00040>;
 		linux,initrd-end = <0x137b0dd1>;
 #endif
@@ -239,7 +239,7 @@
 		compatible = "fsl,mxc_sdc_fb";
 		disp_dev = "ldb";
 		interface_pix_fmt = "RGB24";
-		default_bpp = <24>;
+		default_bpp = <32>;
 		int_clk = <0>;
 		late_init = <0>;
 		#if 0
@@ -254,7 +254,7 @@
 		disp_dev = "hdmi";
 		interface_pix_fmt = "RGB24";
 		mode_str ="1920x1080M@60";
-		default_bpp = <24>;
+		default_bpp = <32>;
 		int_clk = <0>;
 		late_init = <0>;
 		status = "disabled";

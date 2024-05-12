@@ -69,9 +69,9 @@ FBK: ucmd cp /tmp/imx6q-es1.dtb /mnt/mmcblk2p1/imx6q-sabreauto.dtb
 FBK: ucmd umount /mnt/mmcblk2p1
 
 # formatting partition 2
-FBK: ucmd mkfs.ext3 -F -j /dev/mmcblk2p2
+FBK: ucmd mkfs.ext4 -F -j /dev/mmcblk2p2
 FBK: ucmd mkdir -p /mnt/mmcblk2p2
-FBK: ucmd mount -t ext3 /dev/mmcblk2p2 /mnt/mmcblk2p2
+FBK: ucmd mount -t ext4 /dev/mmcblk2p2 /mnt/mmcblk2p2
 # send and write rootfs
 FBK: acmd EXTRACT_UNSAFE_SYMLINKS=1 tar -jxv -C /mnt/mmcblk2p2
 FBK: ucp rootfs.tar.bz2 t:-
@@ -80,4 +80,4 @@ FBK: sync
 # unmount partition 2
 FBK: ucmd umount /mnt/mmcblk2p2
 
-# done
+FBK: done

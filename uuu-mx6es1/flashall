@@ -82,4 +82,4 @@ FBK: sync
 # unmount partition 2
 FBK: ucmd umount /mnt/mmcblk2p2
 
-# done
+FBK: done

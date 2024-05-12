@@ -1,3 +1,22 @@
+$ file fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard
+fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard: DOS/MBR boot sector; partition 1 : ID=0xc, start-CHS (0x40,0,1), end-CHS (0xbf,3,32), startsector 8192, 16384 sectors; partition 2 : ID=0x83, start-CHS (0xc0,0,1), end-CHS (0x3ff,3,32), startsector 24576, 3211264 sectors
+
+$ fdisk -u -l fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard
+Disk fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard: 1.56 GiB, 1660944384 bytes, 3244032 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xf69d8862
+
+Device                                              Boot Start     End Sectors  Size Id Type
+fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard1       8192   24575   16384    8M  c W95 FAT3
+fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard2      24576 3235839 3211264  1.5G 83 Linux
+
+$ sudo mount -o loop,offset=12582912 fsl-image-qt5-validation-imx-imx6qsabreauto.sdcard qt5sd-41498
+
+####
+
 cd /mnt/work/mx6rootfs
 dd if=initramfs-mfg1.cpio.gz.u-boot bs=64 skip=1 of=initramfs-mfg1.cpio.gz
 dd if=initramfs-mfg2.cpio.gz.u-boot bs=64 skip=1 of=initramfs-mfg2.cpio.gz

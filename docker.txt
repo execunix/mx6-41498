@@ -5,7 +5,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
 sudo systemctl status docker
-sudo docker run hello-world
+//sudo docker run hello-world
 sudo usermod -aG docker $USER
 
 docker info
@@ -75,11 +75,25 @@ apt update
 apt install zlib1g:i386 zlib1g-dev:i386
 
 docker stop bionic.yocto
-docker commit bionic.yocto 192.168.111.15:5000/bionic.yocto
+docker commit bionic.yocto execunix/bionic.yocto
 docker images
     REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
-docker run -it --name bionic.yocto.mnt -v /mnt:/mnt 192.168.111.15:5000/bionic.yocto
+docker run -it --name bionic.yocto.mnt -v /mnt:/mnt execunix/bionic.yocto
 
+$ docker login
+execunix
+ckadltmf1!
+$ docker image tag repos/bionic.yocto bionic.yocto
+$ docker rmi repos/bionic.yocto
+$ docker push execunix/bionic.yocto
+$ docker pull execunix/bionic.yocto
+$ docker tag bionic.yocto:latest execunix/bionic.yocto:latest
+$ docker run -it --name bionic.yocto.mnt -v /mnt:/mnt execunix/bionic.yocto
+$ docker update --cpus 24 bionic.yocto.mnt
+
+docker stop bionic.yocto.mnt
+docker start bionic.yocto.mnt
+docker attach bionic.yocto.mnt
 docker exec -it bionic.yocto.mnt /bin/bash
 su execunix
 export USER=$(whoami)

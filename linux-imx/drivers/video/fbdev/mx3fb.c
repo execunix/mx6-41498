@@ -1336,6 +1336,7 @@ static int mx3fb_map_video_memory(struct fb_info *fbi, unsigned int mem_len,
 	int retval = 0;
 	dma_addr_t addr;
 
+	// chpark - dma_mmap_writecombine
 	fbi->screen_base = dma_alloc_wc(fbi->device, mem_len, &addr,
 					GFP_DMA | GFP_KERNEL);
 
@@ -1353,6 +1354,7 @@ static int mx3fb_map_video_memory(struct fb_info *fbi, unsigned int mem_len,
 	if (lock)
 		mutex_unlock(&fbi->mm_lock);
 
+	// chpark - cmp mxc_ipuv3_fb.c
 	dev_dbg(fbi->device, "allocated fb @ p=0x%08x, v=0x%p, size=%d.\n",
 		(uint32_t) fbi->fix.smem_start, fbi->screen_base, fbi->fix.smem_len);
 

@@ -65,4 +65,4 @@ FBK: ucmd cp /tmp/imx6q-es1.dtb /mnt/mmcblk2p1/imx6q-sabreauto.dtb
 # unmount partition 1
 FBK: ucmd umount /mnt/mmcblk2p1
 
-# done
+FBK: done

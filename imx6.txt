@@ -184,7 +184,7 @@ x$ make imx_v7_defconfig
 $ make imx6es1mfg_defconfig
 $ make -j8
 $ cp -v arch/arm/boot/zImage arch/arm/boot/zImage-mfg
-$ make mx6es1_defconfig
+$ make imx6es1_defconfig
 $ make -j8
 
 #######################################################################

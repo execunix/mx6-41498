@@ -23,6 +23,8 @@
  * @ingroup Framebuffer
  */
 
+#define DEBUG // chpark
+
 /*!
  * Include files
  */
@@ -53,6 +55,8 @@
 #include <linux/uaccess.h>
 
 #include "mxc_dispdrv.h"
+
+#define dev_dbg dev_err // chpark
 
 /*
  * Driver name
@@ -2831,6 +2835,7 @@ static int mxcfb_map_video_memory(struct fb_info *fbi)
 					fbi->fix.smem_len / 2;
 	}
 
+	// chpark - dma_mmap_writecombine
 	fbi->screen_base = dma_alloc_writecombine(fbi->device,
 				fbi->fix.smem_len,
 				(dma_addr_t *)&fbi->fix.smem_start,
@@ -2842,6 +2847,7 @@ static int mxcfb_map_video_memory(struct fb_info *fbi)
 		return -EBUSY;
 	}
 
+	// chpark - cmp mx3fb.c
 	dev_dbg(fbi->device, "allocated fb @ paddr=0x%08X, size=%d.\n",
 		(uint32_t) fbi->fix.smem_start, fbi->fix.smem_len);
 
@@ -3545,6 +3551,8 @@ static int mxcfb_probe(struct platform_device *pdev)
 		ipu_disp_set_color_key(mxcfbi->ipu, mxcfbi->ipu_ch, false, 0);
 
 		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+		dev_dbg(&pdev->dev, "res->start:0x%08X res->end:0x%08X\n",
+				res ? res->start : 0, res ? res->end : 0);
 		ret = mxcfb_setup_overlay(pdev, fbi, res);
 
 		if (ret < 0) {
